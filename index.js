@@ -10,13 +10,16 @@ module.exports = {
 
   options: {
     nodeAssets: {
-      'fullcalendar': {
-        srcDir: 'dist',
-        import: ['fullcalendar.js', 'fullcalendar.css']
+      'fullcalendar': function() {
+        return {
+          enabled: !process.env.EMBER_CLI_FASTBOOT,
+          srcDir: 'dist',
+          import: ['fullcalendar.js', 'fullcalendar.css']
+        }
       },
       'fullcalendar-scheduler': function() {
         return {
-          enabled: this.includeScheduler || true,
+          enabled: this.includeScheduler,
           srcDir: 'dist',
           import: ['scheduler.js', 'scheduler.css']
         }
@@ -29,8 +32,10 @@ module.exports = {
     // Add scheduler to executable unless configured not to.
     if (!app.options ||
         !app.options.emberFullCalendar ||
-        app.options.emberFullCalendar.scheduler === undefined || app.options.emberFullCalendar.scheduler) {
+        app.options.emberFullCalendar.scheduler === undefined || app.options.emberFullCalendar.scheduler === false) {
         this.includeScheduler = false;
+    } else {
+        this.includeScheduler = true;
     }
 
     this._super.included.apply(this, arguments);
